@@ -15,13 +15,14 @@ with open(input_csv, mode='r', newline='') as file:
         if row['Product'] != 'Fixed Income':
             # ignore names like DVN
             # ignore symbols like DVN and VUX
-            exclude_stocks = ['DVN', 'VUX', "BEE", "DM"]
+            exclude_stocks = ['DVN', "BEE", "DM"]
             if row['Symbol/Name'] not in exclude_stocks:
 
                 # map Symbol/Name to ticker, for example KNR goes to KNR.NE
                 mapping_dict = {
                     "KNR": "KNR.NE",
-                    "GXE": "GXE.TO"
+                    "GXE": "GXE.TO",
+                    "VUX": "VUX.TO",
                 }
                 mapping_name = row['Symbol/Name']
                 # map Symbol/Name to ticker
