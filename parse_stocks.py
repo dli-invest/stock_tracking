@@ -15,8 +15,23 @@ with open(input_csv, mode='r', newline='') as file:
         if row['Product'] != 'Fixed Income':
             # ignore names like DVN
             # ignore symbols like DVN and VUX
-            if 'DVN' not in row['Symbol/Name'] and 'VUX' not in row['Symbol/Name']:
-                unique_symbols.add(row['Symbol/Name'])
+            exclude_stocks = ['DVN', 'VUX', "BEE", "DM"]
+            if row['Symbol/Name'] not in exclude_stocks:
+
+                # map Symbol/Name to ticker, for example KNR goes to KNR.NE
+                mapping_dict = {
+                    "KNR": "KNR.NE",
+                    "GXE": "GXE.TO"
+                }
+                mapping_name = row['Symbol/Name']
+                # map Symbol/Name to ticker
+                if mapping_name in mapping_dict:
+                    # Perform the necessary operation when the key is found in the dictionary
+                    ticker = mapping_dict[mapping_name]
+                else:
+                    ticker = mapping_name
+
+                unique_symbols.add(mapping_name)
 
 # Write unique symbols/names to output CSV file
 with open(output_csv, mode='w', newline='') as file:

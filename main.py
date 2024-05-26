@@ -10,28 +10,23 @@ DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 
 def is_overbought_rsi(rsi_values, threshold=70):
     """Check if RSI indicates the stock is overbought."""
-    # get rsi_values['close_RSI_30'] as a list
- 
     close_rsi_30 = rsi_values['close_RSI_30']
-    return any(rsi > threshold for rsi in close_rsi_30)
+    return close_rsi_30[-1] > threshold
 
 def is_overbought_stoch(stoch_values, threshold=75):
     """Check if Stochastic Oscillator indicates the stock is overbought.""" 
     close_stoch_30 = stoch_values['STOCHk_14_3_3']
-    return any(stoch > threshold for stoch in close_stoch_30)
-
+    return close_stoch_30[-1] > threshold
 
 def is_oversold_rsi(rsi_values, threshold=30):
-    """Check if RSI indicates the stock is overbought."""
-    # get rsi_values['close_RSI_30'] as a list
- 
+    """Check if RSI indicates the stock is oversold."""
     close_rsi_30 = rsi_values['close_RSI_30']
-    return any(rsi > threshold for rsi in close_rsi_30)
+    return close_rsi_30[-1] < threshold
 
 def is_oversold_stoch(stoch_values, threshold=25):
-    """Check if Stochastic Oscillator indicates the stock is overbought.""" 
+    """Check if Stochastic Oscillator indicates the stock is oversold.""" 
     close_stoch_30 = stoch_values['STOCHk_14_3_3']
-    return any(stoch > threshold for stoch in close_stoch_30)
+    return close_stoch_30[-1] < threshold
 
 
 
@@ -53,7 +48,11 @@ def analyze_stocks(stocks):
         three_months_ago = datetime.now() - timedelta(days=90)
         start_date = three_months_ago.strftime('%Y-%m-%d')
         # Fetch historical price data
-        stock_data = obb.equity.price.historical(symbol=ticker, start_date=start_date, provider='yfinance')
+        try:
+            stock_data = obb.equity.price.historical(symbol=ticker, start_date=start_date, provider='yfinance')
+        except Exception as e:
+            print(f"Error fetching historical data for {ticker}: {e}")
+            continue
 
         overbought_signals = []
         oversold_signals = []
